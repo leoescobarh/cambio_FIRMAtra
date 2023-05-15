@@ -58,13 +58,16 @@
         // Interfaz de selección de texto a buscar
         var searchText = prompt('Ingrese el texto que desea buscar en el archivo:', '');
 
+        // Eliminar espacios adicionales en el texto buscado
+        var searchRegex = new RegExp(searchText.replace(/\s+/g, '\\s*'), 'g');
+
         // Verificar si el texto a buscar está presente en el archivo
-        if (contents.includes(searchText)) {
+        if (searchRegex.test(contents)) {
           // Interfaz de selección del texto de reemplazo
           var replaceText = prompt('Ingrese el texto de reemplazo:', '');
 
           // Realizar el reemplazo en el archivo
-          var replacedContents = contents.replace(new RegExp(searchText, 'g'), function(match) {
+          var replacedContents = contents.replace(searchRegex, function(match) {
             return '<span class="highlight">' + match + '</span>';
           });
 
@@ -90,11 +93,12 @@
 
           // Mostrar el contenedor de resultados
           resultContainer.style.display = 'block';
-        } else {
+          } else {
           alert('El texto a buscar no está presente en el archivo.');
-        }
-      };
-    }
-  </script>
-</body>
-</html>
+          }
+          };
+          }
+          </script>
+
+          </body>
+          </html>
