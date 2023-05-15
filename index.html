@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Subir y modificar archivos</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+  <input type="file" id="fileInput">
+  <button onclick="processFile()">Procesar</button>
+  <a id="downloadLink" style="display: none;" download></a>
+
+  <script>
+    function processFile() {
+      var fileInput = document.getElementById('fileInput');
+      var file = fileInput.files[0];
+      
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var contents = e.target.result;
+        
+        // Identificar relaciones y reemplazar
+        var replacedContents = contents.replace(/TRA\.COD_ESTADO_FIRMA = 1/g, "TRA.COD_ESTADO_FIRMA IN (1,2)")
+                                        .replace(/TRA2/g, "TRA.COD_ESTADO_FIRMA IN (1,2)")
+                                        .replace(/TRA3/g, "TRA.COD_ESTADO_FIRMA IN (1,2)");
+
+        // Crear archivo de salida
+        var modifiedFile = new Blob([replacedContents], {type: 'text/plain'});
+        var downloadLink = document.getElementById('downloadLink');
+        downloadLink.href = URL.createObjectURL(modifiedFile);
+        downloadLink.innerText = 'Descargar resultado';
+        downloadLink.style.display = 'block';
+      };
+      
+      reader.readAsText(file);
+    }
+  </script>
+</body>
+</html>
