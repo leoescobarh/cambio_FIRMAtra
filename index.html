@@ -91,12 +91,12 @@
         listItem.appendChild(downloadLink);
         listItem.appendChild(fileDiff);
         resultList.appendChild(listItem);
-
-        // Mostrar el contenedor de resultados
-resultContainer.style.display = 'block';
-};
+            // Mostrar el contenedor de resultados
+    resultContainer.style.display = 'block';
+  };
 }
-    function diffStrings(original, modified) {
+
+function diffStrings(original, modified) {
   var diff = JsDiff.diffLines(original, modified);
   var diffString = '';
   var lineCount = 0;
@@ -120,7 +120,7 @@ resultContainer.style.display = 'block';
     });
   });
 
-  // Agregar números de línea si hay contenido
+  // Agregar números de línea si hay contenido y líneas modificadas
   if (lineCount > 0) {
     diffString = addLineNumbers(diffString, lineCount);
   }
@@ -134,14 +134,15 @@ function addLineNumbers(text, lineCount) {
 
   for (var i = 0; i < lines.length; i++) {
     var lineNumber = i + 1;
-    var padding = ' '.repeat(lineNumberWidth - lineNumber.toString().length);
+    var padding = ' '.repeat(Math.max(0, lineNumberWidth - lineNumber.toString().length));
     lines[i] = '<span style="display: inline-block; width: 20px; text-align: right;">' + padding + lineNumber + ':</span> ' + lines[i];
   }
 
   return lines.join('\n');
 }
-  </script>
+      </script>
 </body>
 </html>
+
 
 
