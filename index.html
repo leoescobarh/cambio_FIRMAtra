@@ -72,9 +72,16 @@
           var replaceText = prompt('Ingrese el texto de reemplazo:', '');
 
           // Realizar el reemplazo en el archivo
-          var replacedContents = contents.replace(searchRegex, function(match) {
-            return '<span class="modified-line">' + match + '</span>';
+          var lines = contents.split('\n');
+          var replacedLines = lines.map(function(line) {
+            if (searchRegex.test(line)) {
+              return '<span class="modified-line">' + line.replace(searchRegex, replaceText) + '</span>';
+            } else {
+              return line;
+            }
           });
+
+          var replacedContents = replacedLines.join('\n');
 
           // Crear archivo de salida
           var modifiedFile = new Blob([replacedContents], { type: 'text/plain' });
@@ -92,8 +99,6 @@
           fileContents.className = 'file-contents';
           fileContents.innerHTML = replacedContents;
           listItem.appendChild(fileName);
-          listItem.appendChild
-                    downloadLink;
           listItem.appendChild(downloadLink);
           listItem.appendChild(fileContents);
           resultList.appendChild(listItem);
@@ -101,6 +106,7 @@
           // Mostrar el contenedor de resultados
           resultContainer.style.display = 'block';
         } else {
+
           alert('El texto a buscar no está presente en el archivo.');
         }
       };
