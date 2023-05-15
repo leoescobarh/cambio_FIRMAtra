@@ -71,8 +71,11 @@
             return '<span class="highlight">' + match + '</span>';
           });
 
+          // Extraer el texto sin las etiquetas HTML
+          var plainText = stripHtmlTags(replacedContents);
+
           // Crear archivo de salida
-          var modifiedFile = new Blob([replacedContents], { type: 'text/plain' });
+          var modifiedFile = new Blob([plainText], { type: 'text/plain' });
 
           // Agregar el resultado a la lista
           var listItem = document.createElement('li');
@@ -90,15 +93,19 @@
           listItem.appendChild(downloadLink);
           listItem.appendChild(fileContents);
           resultList.appendChild(listItem);
+                // Mostrar el contenedor de resultados
+      resultContainer.style.display = 'block';
+    } else {
+      alert('El texto a buscar no está presente en el archivo.');
+    }
+  };
+}
 
-          // Mostrar el contenedor de resultados
-          resultContainer.style.display = 'block';
-          } else {
-          alert('El texto a buscar no está presente en el archivo.');
-          }
-          };
-          }
-          </script>
-
-          </body>
-          </html>
+function stripHtmlTags(html) {
+  var temporalDivElement = document.createElement('div');
+  temporalDivElement.innerHTML = html;
+  return temporalDivElement.textContent || temporalDivElement.innerText || '';
+}
+</script>
+</body>
+</html>
