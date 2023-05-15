@@ -2,37 +2,100 @@
 <html>
 <head>
   <title>Subir y modificar archivos</title>
+  <style>
+    .file-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .file-name {
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    .file-diff {
+      font-family: monospace;
+      white-space: pre;
+      background-color: #f6f8fa;
+      padding: 10px;
+    }
+  </style>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-  <input type="file" id="fileInput">
-  <button onclick="processFile()">Procesar</button>
-  <a id="downloadLink" style="display: none;" download></a>
+  <input type="file" id="fileInput" multiple>
+  <button onclick="processFiles()">Procesar</button>
+  <div id="resultContainer" style="display: none;">
+    <h3>Resultado:</h3>
+    <ul id="resultList"></ul>
+  </div>
 
   <script>
-    function processFile() {
+    function processFiles() {
       var fileInput = document.getElementById('fileInput');
-      var file = fileInput.files[0];
-      
-      var reader = new FileReader();
-      reader.onload = function(e) {
+      var files = fileInput.files;
+
+      var resultList = document.getElementById('resultList');
+      resultList.innerHTML = '';
+
+      for (var i = 0; i < files.length; i++) {
+        var file = files[i];
+        var reader = new FileReader();
+        reader.onload = createFileProcessor(file);
+        reader.readAsText(file);
+      }
+    }
+
+    function createFileProcessor(file) {
+      return function(e) {
         var contents = e.target.result;
-        
+
         // Identificar relaciones y reemplazar
         var replacedContents = contents.replace(/TRA\.COD_ESTADO_FIRMA = 1/g, "TRA.COD_ESTADO_FIRMA IN (1,2)")
-                                        .replace(/TRA2/g, "TRA.COD_ESTADO_FIRMA IN (1,2)")
-                                        .replace(/TRA3/g, "TRA.COD_ESTADO_FIRMA IN (1,2)");
+          .replace(/TRA2/g, "TRA.COD_ESTADO_FIRMA IN (1,2)")
+          .replace(/TRA3/g, "TRA.COD_ESTADO_FIRMA IN (1,2)");
+
+        // Verificar si se realizó el cambio
+        var isModified = replacedContents !== contents;
 
         // Crear archivo de salida
-        var modifiedFile = new Blob([replacedContents], {type: 'text/plain'});
-        var downloadLink = document.getElementById('downloadLink');
+        var modifiedFile = new Blob([replacedContents], { type: 'text/plain' });
+
+        // Agregar el resultado a la lista
+        var listItem = document.createElement('li');
+        var fileName = document.createElement('div');
+        fileName.className = 'file-name';
+        fileName.innerText = file.name;
+        var downloadLink = document.createElement('a');
         downloadLink.href = URL.createObjectURL(modifiedFile);
-        downloadLink.innerText = 'Descargar resultado';
-        downloadLink.style.display = 'block';
+        downloadLink.innerText = isModified ? 'Descargar resultado' : 'Sin cambios';
+        downloadLink.download = file.name;
+        var fileDiff = document.createElement('div');
+        fileDiff.className = 'file-diff';
+        fileDiff.innerText = isModified ? diffStrings(contents, replacedContents) : 'No se realizaron cambios';
+        listItem.appendChild(fileName);
+        listItem.appendChild(downloadLink);
+        listItem.appendChild(fileDiff);
+        resultList.appendChild(listItem);
+
+        // Mostrar el contenedor de resultados
+        var resultContainer = document.getElementById('resultContainer');
+        resultContainer.style.display = 'block';
       };
-      
-      reader.readAsText(file);
     }
-  </script>
+
+    function diffStrings(original, modified) {
+      var diff = JsDiff.diffChars(original, modified);
+      var diffString = '';
+      diff.forEach(function(part) {
+        var color = part.added ? 'green' :
+          part.removed ? 'red' : 'grey';
+        diffString += '<span style="color: ' + color
+'">' + part.value + '</span>';
+});
+return diffString;
+}
+</script>
 </body>
 </html>
