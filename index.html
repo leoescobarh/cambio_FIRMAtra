@@ -24,11 +24,6 @@
     .highlight {
       background-color: yellow;
     }
-
-    .modified-line {
-      background-color: lightblue;
-      font-weight: bold;
-    }
   </style>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
@@ -75,7 +70,7 @@
           var lines = contents.split('\n');
           var replacedLines = lines.map(function(line) {
             if (searchRegex.test(line)) {
-              return line.replace(searchRegex, replaceText);
+              return line.replace(searchRegex, '<mark>$&</mark>');
             } else {
               return line;
             }
@@ -97,7 +92,7 @@
           downloadLink.download = file.name;
           var fileContents = document.createElement('div');
           fileContents.className = 'file-contents';
-          fileContents.innerText = replacedContents;
+          fileContents.innerHTML = replacedContents;
           listItem.appendChild(fileName);
           listItem.appendChild(downloadLink);
           listItem.appendChild(fileContents);
@@ -106,12 +101,12 @@
           // Mostrar el contenedor de resultados
           resultContainer.style.display = 'block';
         } else {
-
-
-          alert('El texto a buscar no está presente en el archivo.');
+          alert('El texto no fue encontrado en el archivo.');
         }
       };
     }
+ 
+
   </script>
 </body>
 </html>
