@@ -85,19 +85,18 @@
         downloadLink.innerText = isModified ? 'Descargar resultado' : 'Sin cambios';
         downloadLink.download = file.name;
         var fileDiff = document.createElement('div');
-        fileDiff.className = 'file-diff
-        ';
+        fileDiff.className = 'file-diff';
         fileDiff.innerHTML = isModified ? diffStrings(contents, replacedContents) : 'No se realizaron cambios';
         listItem.appendChild(fileName);
         listItem.appendChild(downloadLink);
         listItem.appendChild(fileDiff);
         resultList.appendChild(listItem);
-            // Mostrar el contenedor de resultados
-    resultContainer.style.display = 'block';
-  };
-}
 
-function diffStrings(original, modified) {
+        // Mostrar el contenedor de resultados
+resultContainer.style.display = 'block';
+};
+}
+    function diffStrings(original, modified) {
   var diff = JsDiff.diffLines(original, modified);
   var diffString = '';
   var lineCount = 0;
