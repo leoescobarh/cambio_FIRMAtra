@@ -51,55 +51,56 @@
       }
     }
 
-    function createFileProcessor(file) {
-      return function(e) {
-        var contents = e.target.result;
+ function createFileProcessor(file) {
+  return function(e) {
+    var contents = e.target.result;
 
-        // Interfaz de selección de texto a buscar
-        var searchText = prompt('Ingrese el texto que desea buscar en el archivo:', '');
+    // Interfaz de selección de texto a buscar
+    var searchText = prompt('Ingrese el texto que desea buscar en el archivo ' + file.name + ':', '');
 
-        // Eliminar espacios adicionales en el texto buscado y hacer la búsqueda insensible a mayúsculas y minúsculas
-      var searchRegex = new RegExp('\\b' + searchText.trim().replace(/\s+/g, '\\s+') + '\\b', 'gi');
+    // Eliminar espacios adicionales en el texto buscado y hacer la búsqueda insensible a mayúsculas y minúsculas
+    var searchRegex = new RegExp('\\b' + searchText.trim().replace(/\s+/g, '\\s+') + '\\b', 'gi');
 
+    // Verificar si el texto a buscar está presente en el archivo
+    if (searchRegex.test(contents)) {
+      // Interfaz de selección del texto de reemplazo
+      var replaceText = prompt('Ingrese el texto de reemplazo para el archivo ' + file.name + ':', '');
 
-        // Verificar si el texto a buscar está presente en el archivo
-        if (searchRegex.test(contents)) {
-          // Interfaz de selección del texto de reemplazo
-          var replaceText = prompt('Ingrese el texto de reemplazo:', '');
+      // Realizar el reemplazo en el archivo
+      var replacedContents = contents.replace(searchRegex, function(match) {
+        return '<mark>' + replaceText + '</mark>';
+      });
 
-          // Realizar el reemplazo en el archivo
-          var replacedContents = contents.replace(searchRegex, function(match) {
-            return '<mark>' + replaceText + '</mark>';
-          });
+      // Crear archivo de salida sin etiquetas
+      var strippedContents = replacedContents.replace(/<\/?mark>/g, '');
+      var modifiedFile = new Blob([strippedContents], { type: 'text/plain' });
 
-          // Crear archivo de salida sin etiquetas
-          var strippedContents = replacedContents.replace(/<\/?mark>/g, '');
-          var modifiedFile = new Blob([strippedContents], { type: 'text/plain' });
+      // Agregar el resultado a la lista
+      var listItem = document.createElement('li');
+      listItem.setAttribute('data-file-name', file.name); // Agregar el nombre del archivo como atributo personalizado
+      var fileName = document.createElement('div');
+      fileName.className = 'file-name';
+      fileName.innerText = file.name;
+      var downloadLink = document.createElement('a');
+      downloadLink.href = URL.createObjectURL(modifiedFile);
+      downloadLink.innerText = 'Descargar resultado';
+      downloadLink.download = file.name;
+      var fileContents = document.createElement('div');
+      fileContents.className = 'file-contents';
+      fileContents.innerHTML = replacedContents;
+      listItem.appendChild(fileName);
+      listItem.appendChild(downloadLink);
+      listItem.appendChild(fileContents);
+      resultList.appendChild(listItem);
 
-          // Agregar el resultado a la lista
-          var listItem = document.createElement('li');
-          var fileName = document.createElement('div');
-          fileName.className = 'file-name';
-          fileName.innerText = file.name;
-          var downloadLink = document.createElement('a');
-          downloadLink.href = URL.createObjectURL(modifiedFile);
-          downloadLink.innerText = 'Descargar resultado';
-          downloadLink.download = file.name;
-          var fileContents = document.createElement('div');
-          fileContents.className = 'file-contents';
-          fileContents.innerHTML = replacedContents;
-          listItem.appendChild(fileName);
-          listItem.appendChild(downloadLink);
-          listItem.appendChild(fileContents);
-          resultList.appendChild(listItem);
-
-          // Mostrar el contenedor de resultados
-          resultContainer.style.display = 'block';
-        } else {
-          alert('El texto no fue encontrado en el archivo.');
-        }
-      };
+      // Mostrar el contenedor de resultados
+      resultContainer.style.display = 'block';
+    } else {
+      alert('El texto no fue encontrado en el archivo ' + file.name + '.');
     }
+  };
+}
+
 
  
 
