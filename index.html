@@ -85,18 +85,19 @@
         downloadLink.innerText = isModified ? 'Descargar resultado' : 'Sin cambios';
         downloadLink.download = file.name;
         var fileDiff = document.createElement('div');
-        fileDiff.className = 'file-diff';
+        fileDiff.className = 'file-diff
+        ';
         fileDiff.innerHTML = isModified ? diffStrings(contents, replacedContents) : 'No se realizaron cambios';
         listItem.appendChild(fileName);
         listItem.appendChild(downloadLink);
         listItem.appendChild(fileDiff);
         resultList.appendChild(listItem);
-
-        // Mostrar el contenedor de resultados
-        resultContainer.style.display = 'block';
-};
+            // Mostrar el contenedor de resultados
+    resultContainer.style.display = 'block';
+  };
 }
-    function diffStrings(original, modified) {
+
+function diffStrings(original, modified) {
   var diff = JsDiff.diffLines(original, modified);
   var diffString = '';
   var lineCount = 0;
@@ -120,8 +121,10 @@
     });
   });
 
-  // Agregar números de línea
-  diffString = addLineNumbers(diffString, lineCount);
+  // Agregar números de línea si hay contenido
+  if (lineCount > 0) {
+    diffString = addLineNumbers(diffString, lineCount);
+  }
 
   return diffString;
 }
@@ -138,8 +141,8 @@ function addLineNumbers(text, lineCount) {
 
   return lines.join('\n');
 }
-</script>
+  </script>
 </body>
 </html>
-       
+
 
