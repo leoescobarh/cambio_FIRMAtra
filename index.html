@@ -51,10 +51,18 @@
       return function(e) {
         var contents = e.target.result;
 
-        // Identificar relaciones y reemplazar
-        var replacedContents = contents.replace(/TRA\.COD_ESTADO_FIRMA = 1/g, "TRA.COD_ESTADO_FIRMA IN (1,2)")
-          .replace(/TRA2/g, "TRA.COD_ESTADO_FIRMA IN (1,2)")
-          .replace(/TRA3/g, "TRA.COD_ESTADO_FIRMA IN (1,2)");
+        // Identificar relaciones comentadas y reemplazar
+        var replacedContents = contents.replace(/(\/\*.*?\*\/)?(\s*)(TRA\.COD_ESTADO_FIRMA = 1|TRA2|TRA3)/g,
+          function(match, p1, p2, p3) {
+            if (p1) {
+              // Si la relación está comentada, mantener el comentario
+              return p1 + p2 + p3;
+            } else {
+              // Si la relación no está comentada, realizar el reemplazo
+              return p2 + 'TRA.COD_ESTADO_FIRMA IN (1,2)';
+            }
+          }
+        );
 
         // Verificar si se realizó el cambio
         var isModified = replacedContents !== contents;
@@ -73,7 +81,7 @@
         downloadLink.download = file.name;
         var fileDiff = document.createElement('div');
         fileDiff.className = 'file-diff';
-        fileDiff.innerText = isModified ? diffStrings(contents, replacedContents) : 'No se realizaron cambios';
+        fileDiff.innerHTML = isModified ? diffStrings(contents, replacedContents) : 'No se realizaron cambios';
         listItem.appendChild(fileName);
         listItem.appendChild(downloadLink);
         listItem.appendChild(fileDiff);
@@ -87,15 +95,16 @@
 
     function diffStrings(original, modified) {
       var diff = JsDiff.diffChars(original, modified);
-      var diffString = '';
-      diff.forEach(function(part) {
-        var color = part.added ? 'green' :
-          part.removed ? 'red' : 'grey';
-        diffString += '<span style="color: ' + color
-'">' + part.value + '</span>';
+     
+var diffString = '';
+diff.forEach(function(part) {
+var color = part.added ? 'green' :
+part.removed ? 'red' : 'grey';
+diffString += '<span style="color: ' + color + '">' + part.value + '</span>';
 });
 return diffString;
 }
 </script>
+
 </body>
 </html>
