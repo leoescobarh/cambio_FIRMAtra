@@ -58,8 +58,9 @@
         // Interfaz de selección de texto a buscar
         var searchText = prompt('Ingrese el texto que desea buscar en el archivo:', '');
 
-        // Eliminar espacios adicionales en el texto buscado
-        var searchRegex = new RegExp('\\b' + searchText.trim().replace(/\s+/g, '\\s+') + '\\b', 'g');
+        // Eliminar espacios adicionales en el texto buscado y hacer la búsqueda insensible a mayúsculas y minúsculas
+      var searchRegex = new RegExp('\\b' + searchText.trim().replace(/\s+/g, '\\s+') + '\\b', 'gi');
+
 
         // Verificar si el texto a buscar está presente en el archivo
         if (searchRegex.test(contents)) {
