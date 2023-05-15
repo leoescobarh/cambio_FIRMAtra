@@ -72,25 +72,12 @@
           var replaceText = prompt('Ingrese el texto de reemplazo:', '');
 
           // Realizar el reemplazo en el archivo
-          var replacedContents = contents.replace(searchRegex, replaceText);
-
-          // Dividir el contenido en líneas
-          var lines = replacedContents.split('\n');
-
-          // Recorrer cada línea y resaltar la línea modificada
-          var modifiedLines = lines.map(function(line) {
-            if (searchRegex.test(line)) {
-              return '<span class="modified-line">' + line + '</span>';
-            } else {
-              return line;
-            }
+          var replacedContents = contents.replace(searchRegex, function(match) {
+            return '<span class="modified-line">' + match + '</span>';
           });
 
-          // Unir las líneas modificadas nuevamente
-          var modifiedContents = modifiedLines.join('\n');
-
           // Crear archivo de salida
-          var modifiedFile = new Blob([modifiedContents], { type: 'text/plain' });
+          var modifiedFile = new Blob([replacedContents], { type: 'text/plain' });
 
           // Agregar el resultado a la lista
           var listItem = document.createElement('li');
@@ -103,8 +90,10 @@
           downloadLink.download = file.name;
           var fileContents = document.createElement('div');
           fileContents.className = 'file-contents';
-          fileContents.innerHTML = modifiedContents;
+          fileContents.innerHTML = replacedContents;
           listItem.appendChild(fileName);
+          listItem.appendChild
+                    downloadLink;
           listItem.appendChild(downloadLink);
           listItem.appendChild(fileContents);
           resultList.appendChild(listItem);
