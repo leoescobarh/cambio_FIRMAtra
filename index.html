@@ -75,7 +75,7 @@
           var lines = contents.split('\n');
           var replacedLines = lines.map(function(line) {
             if (searchRegex.test(line)) {
-              return '<span class="modified-line">' + line.replace(searchRegex, replaceText) + '</span>';
+              return line.replace(searchRegex, replaceText);
             } else {
               return line;
             }
@@ -97,7 +97,7 @@
           downloadLink.download = file.name;
           var fileContents = document.createElement('div');
           fileContents.className = 'file-contents';
-          fileContents.innerHTML = replacedContents;
+          fileContents.innerText = replacedContents;
           listItem.appendChild(fileName);
           listItem.appendChild(downloadLink);
           listItem.appendChild(fileContents);
@@ -106,6 +106,7 @@
           // Mostrar el contenedor de resultados
           resultContainer.style.display = 'block';
         } else {
+
 
           alert('El texto a buscar no está presente en el archivo.');
         }
