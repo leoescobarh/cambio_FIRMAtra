@@ -67,9 +67,7 @@
           var replaceText = prompt('Ingrese el texto de reemplazo:', '');
 
           // Realizar el reemplazo en el archivo
-          var replacedContents = contents.replace(searchRegex, function(match) {
-            return '<span class="highlight">' + match + '</span>';
-          });
+          var replacedContents = contents.replace(searchRegex, replaceText);
 
           // Crear archivo de salida
           var modifiedFile = new Blob([replacedContents], { type: 'text/plain' });
@@ -101,4 +99,3 @@
   </script>
 </body>
 </html>
-
