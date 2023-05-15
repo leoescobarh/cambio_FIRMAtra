@@ -24,6 +24,11 @@
     .highlight {
       background-color: yellow;
     }
+
+    .modified-line {
+      background-color: lightblue;
+      font-weight: bold;
+    }
   </style>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
@@ -69,8 +74,23 @@
           // Realizar el reemplazo en el archivo
           var replacedContents = contents.replace(searchRegex, replaceText);
 
+          // Dividir el contenido en líneas
+          var lines = replacedContents.split('\n');
+
+          // Recorrer cada línea y resaltar la línea modificada
+          var modifiedLines = lines.map(function(line) {
+            if (searchRegex.test(line)) {
+              return '<span class="modified-line">' + line + '</span>';
+            } else {
+              return line;
+            }
+          });
+
+          // Unir las líneas modificadas nuevamente
+          var modifiedContents = modifiedLines.join('\n');
+
           // Crear archivo de salida
-          var modifiedFile = new Blob([replacedContents], { type: 'text/plain' });
+          var modifiedFile = new Blob([modifiedContents], { type: 'text/plain' });
 
           // Agregar el resultado a la lista
           var listItem = document.createElement('li');
@@ -83,7 +103,7 @@
           downloadLink.download = file.name;
           var fileContents = document.createElement('div');
           fileContents.className = 'file-contents';
-          fileContents.innerHTML = replacedContents;
+          fileContents.innerHTML = modifiedContents;
           listItem.appendChild(fileName);
           listItem.appendChild(downloadLink);
           listItem.appendChild(fileContents);
@@ -99,3 +119,4 @@
   </script>
 </body>
 </html>
+
