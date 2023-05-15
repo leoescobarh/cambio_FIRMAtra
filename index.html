@@ -20,6 +20,10 @@
       background-color: #f6f8fa;
       padding: 10px;
     }
+
+    .highlight {
+      background-color: yellow;
+    }
   </style>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
@@ -60,7 +64,9 @@
           var replaceText = prompt('Ingrese el texto de reemplazo:', '');
 
           // Realizar el reemplazo en el archivo
-          var replacedContents = contents.replace(new RegExp(searchText, 'g'), replaceText);
+          var replacedContents = contents.replace(new RegExp(searchText, 'g'), function(match) {
+            return '<span class="highlight">' + match + '</span>';
+          });
 
           // Crear archivo de salida
           var modifiedFile = new Blob([replacedContents], { type: 'text/plain' });
@@ -76,7 +82,7 @@
           downloadLink.download = file.name;
           var fileContents = document.createElement('div');
           fileContents.className = 'file-contents';
-          fileContents.innerText = replacedContents;
+          fileContents.innerHTML = replacedContents;
           listItem.appendChild(fileName);
           listItem.appendChild(downloadLink);
           listItem.appendChild(fileContents);
@@ -92,6 +98,3 @@
   </script>
 </body>
 </html>
-
-
-
