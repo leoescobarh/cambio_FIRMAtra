@@ -29,6 +29,11 @@
 </head>
 <body>
   <input type="file" id="fileInput" multiple>
+  <select id="searchOption">
+    <option value="all">Buscar en todos los archivos</option>
+    <option value="selected">Buscar en archivos seleccionados</option>
+  </select>
+  <input type="text" id="replaceText" placeholder="Texto de reemplazo">
   <button onclick="processFiles()">Procesar</button>
   <div id="resultContainer" style="display: none;">
     <h3>Resultado:</h3>
@@ -39,6 +44,8 @@
     function processFiles() {
       var fileInput = document.getElementById('fileInput');
       var files = fileInput.files;
+      var replaceText = document.getElementById('replaceText').value;
+      var searchOption = document.getElementById('searchOption').value;
 
       var resultList = document.getElementById('resultList');
       resultList.innerHTML = '';
@@ -46,64 +53,63 @@
       for (var i = 0; i < files.length; i++) {
         var file = files[i];
         var reader = new FileReader();
-        reader.onload = createFileProcessor(file);
+        reader.onload = createFileProcessor(file, replaceText, searchOption);
         reader.readAsText(file);
       }
     }
 
- function createFileProcessor(file) {
-  return function(e) {
-    var contents = e.target.result;
+    function createFileProcessor(file, replaceText, searchOption) {
+      return function(e) {
+        var contents = e.target.result;
+        var searchText;
 
-    // Interfaz de selección de texto a buscar
-    var searchText = prompt('Ingrese el texto que desea buscar en el archivo ' + file.name + ':', '');
+        if (searchOption === 'selected') {
+          searchText = prompt('Ingrese el texto que desea buscar en el archivo ' + file.name + ':', '');
+        } else {
+          searchText = replaceText;
+        }
 
-    // Eliminar espacios adicionales en el texto buscado y hacer la búsqueda insensible a mayúsculas y minúsculas
-    var searchRegex = new RegExp('\\b' + searchText.trim().replace(/\s+/g, '\\s+') + '\\b', 'gi');
+        var searchRegex = new RegExp('\\b' + searchText.trim().replace(/\s+/g, '\\s+') + '\\b', 'gi');
 
-    // Verificar si el texto a buscar está presente en el archivo
-    if (searchRegex.test(contents)) {
-      // Interfaz de selección del texto de reemplazo
-      var replaceText = prompt('Ingrese el texto de reemplazo para el archivo ' + file.name + ':', '');
+        if (searchRegex.test(contents)) {
+          if (searchOption === 'all') {
+            var confirmSearchAll = confirm('¿Desea buscar el mismo texto en todos los archivos?');
+            if (!confirmSearchAll) {
+              return;
+            }
+          }
 
-      // Realizar el reemplazo en el archivo
-      var replacedContents = contents.replace(searchRegex, function(match) {
-        return '<mark>' + replaceText + '</mark>';
-      });
+          var replacedContents = contents.replace(searchRegex, function(match) {
+            return '<mark>' + replaceText + '</mark>';
+          });
 
-      // Crear archivo de salida sin etiquetas
-      var strippedContents = replacedContents.replace(/<\/?mark>/g, '');
-      var modifiedFile = new Blob([strippedContents], { type: 'text/plain' });
+          var strippedContents = replacedContents.replace(/<\/?mark>/g, '');
+          var modifiedFile = new Blob([strippedContents], { type: 'text/plain' });
 
-      // Agregar el resultado a la lista
-      var listItem = document.createElement('li');
-      listItem.setAttribute('data-file-name', file.name); // Agregar el nombre del archivo como atributo personalizado
-      var fileName = document.createElement('div');
-      fileName.className = 'file-name';
-      fileName.innerText = file.name;
-      var downloadLink = document.createElement('a');
-      downloadLink.href = URL.createObjectURL(modifiedFile);
-      downloadLink.innerText = 'Descargar resultado';
-      downloadLink.download = file.name;
-      var fileContents = document.createElement('div');
-      fileContents.className = 'file-contents';
-      fileContents.innerHTML = replacedContents;
-      listItem.appendChild(fileName);
-      listItem.appendChild(downloadLink);
-      listItem.appendChild(fileContents);
-      resultList.appendChild(listItem);
+          var listItem = document.createElement('li');
+          listItem.setAttribute('data-file-name', file.name);
+          var fileName = document.createElement('div');
+          fileName.className = 'file-name';
+          fileName.innerText = file.name;
+          var downloadLink = document.createElement('a');
+          downloadLink.href = URL.createObjectURL(modifiedFile);
+          downloadLink.innerText = 'Descargar resultado';
+          downloadLink.download = file.name;
+          var fileContents = document.createElement('div');
+          fileContents.className = 'file-contents';
+          fileContents.innerHTML = replacedContents;
+          listItem 
+          listItem.appendChild(fileName);
+          listItem.appendChild(downloadLink);
+          listItem.appendChild(fileContents);
+          resultList.appendChild(listItem);
 
-      // Mostrar el contenedor de resultados
-      resultContainer.style.display = 'block';
-    } else {
-      alert('El texto no fue encontrado en el archivo ' + file.name + '.');
+          resultContainer.style.display = 'block';
+        } else {
+          alert('El texto no fue encontrado en el archivo ' + file.name + '.');
+        }
+      };
     }
-  };
-}
-
-
- 
-
   </script>
 </body>
 </html>
